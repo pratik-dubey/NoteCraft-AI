@@ -1,9 +1,14 @@
 "use client";
 
+import { Spinner } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
+import { SignInButton } from "@clerk/clerk-react";
+import { useConvexAuth } from "convex/react";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export const Heading = () => {
+  const { isAuthenticated, isLoading } = useConvexAuth();
   return (
     <div className="max-w-3xl space-y-4">
       <h1 className="text-3xl sm:text-5xl md:text-6xl">
@@ -14,10 +19,31 @@ export const Heading = () => {
         NoteCraft AI is the connected workspace where <br />
         better , faster work happens.
       </h3>
-      <Button variant="default" className="bg-black hover:bg-gray-800">
-        Enter NoteCraft AI
-        <ArrowRight className="h-4 w-4 ml-2"></ArrowRight>
-      </Button>
+      {isLoading && (
+        <div className="w-full flex items-center justify-center">
+          <Spinner size={"lg"}></Spinner>
+        </div>
+      )}
+      {isAuthenticated && !isLoading && (
+        <Button
+          variant="default"
+          className="bg-black hover:bg-gray-800"
+          asChild
+        >
+          <Link href={"/documents"}>
+            Enter NoteCraft AI
+            <ArrowRight className="h-4 w-4 ml-2"></ArrowRight>
+          </Link>
+        </Button>
+      )}
+      {!isAuthenticated && !isLoading && (
+        <SignInButton mode="modal">
+          <Button size={"sm"}>
+            Get NoteCraft free
+            <ArrowRight className="h-4 w-4 ml-1"></ArrowRight>
+          </Button>
+        </SignInButton>
+      )}
     </div>
   );
 };
